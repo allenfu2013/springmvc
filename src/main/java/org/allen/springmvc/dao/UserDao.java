@@ -6,7 +6,7 @@ import java.util.Map;
 import org.allen.springmvc.entity.User;
 import org.springframework.stereotype.Repository;
 
-@Repository
+//@Repository
 public class UserDao extends BaseDao {
 
 	public Long insert(User user) {

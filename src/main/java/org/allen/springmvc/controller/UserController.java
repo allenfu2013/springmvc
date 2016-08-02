@@ -12,21 +12,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RequestMapping("user")
 public class UserController {
 
-	@Autowired
-	private UserDao userDao;
+//	@Autowired
+//	private UserDao userDao;
+
+    public UserController(){
+        System.out.println("#########");
+    }
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestParam("id")Long id, @RequestParam("name")String name) {
-		// TODO ²ÎÊý¼ì²é
 		User user = new User();
 		user.setId(id);
 		user.setName(name);
-		userDao.insert(user);
+//		userDao.insert(user);
 		return new Gson().toJson(user);
 	}
 	
@@ -36,7 +42,31 @@ public class UserController {
 		Logger.info(this, String.format("[/user/get-by-id], userId: %s", userId));
 //		Logger.warn(this, String.format("[/user/get-by-id], userId: %s", userId));
 //		Logger.error(this, String .format("[/user/get-by-id], userId: %s", userId), new RuntimeException("fuck"));
-		User user = userDao.getById(userId);
-		return new Gson().toJson(user);
+//		User user = userDao.getById(userId);
+		return new Gson().toJson(null);
 	}
+
+    @RequestMapping(value = "hello", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public String hello() {
+        return "hello";
+    }
+
+    @RequestMapping(value = "hello1", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public Map hello1() {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("hello", "ä½ å¥½");
+        return map;
+    }
+
+    @RequestMapping(value = "hello2", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public String hello2() {
+        int i = 1/0;
+        User user = new User();
+        user.setId(111L);
+        user.setName("ä½ å¥½");
+        return new Gson().toJson(user);
+    }
 }
