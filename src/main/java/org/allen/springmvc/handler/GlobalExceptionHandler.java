@@ -1,6 +1,8 @@
 package org.allen.springmvc.handler;
 
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
+import org.allen.springmvc.exception.PlatformException;
+import org.allen.springmvc.exception.UnanthorizeException;
 import org.allen.springmvc.utils.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -27,19 +29,24 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
 
         Logger.info(this, String.format("api:%s, obj:%s, e:%s", request.getRequestURI(), object, exception));
         ModelAndView mv = new ModelAndView();
-
+        String retCode = null;
+        String retMsg = null;
         // process according specified exception
-        /*if (exception instanceof RuntimeException) {
-            ...
-        } else if() {
-
-        }*/
-
+        if (exception instanceof PlatformException) {
+            retCode = ((PlatformException) exception).getRetCode();
+            retMsg = ((PlatformException) exception).getRetMsg();
+        } else if(exception instanceof UnanthorizeException) {
+            retCode = ((UnanthorizeException) exception).getRetCode();
+            retMsg = ((UnanthorizeException) exception).getRetMsg();
+        } else {
+            retCode = "00";
+            retMsg = "SystemError";
+        }
 
         FastJsonJsonView view = new FastJsonJsonView();
         Map<String, Object> attributes = new HashMap<String, Object>();
-        attributes.put("retCode", "99");
-        attributes.put("retMsg", "SystemError");
+        attributes.put("retCode", retCode);
+        attributes.put("retMsg", retMsg);
         view.setAttributesMap(attributes);
         mv.setView(view);
         return mv;

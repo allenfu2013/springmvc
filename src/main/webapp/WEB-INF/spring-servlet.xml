@@ -21,4 +21,11 @@
             <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter"/>
         </mvc:message-converters>
     </mvc:annotation-driven>
+    
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/api/**"/>
+            <bean class="org.allen.springmvc.interceptor.AccessInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>
