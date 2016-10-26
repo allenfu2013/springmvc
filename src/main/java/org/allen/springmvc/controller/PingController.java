@@ -17,7 +17,6 @@ public class PingController {
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO();
         apiResponseDTO.setRetCode("00");
         apiResponseDTO.setRetMsg("springmvc is running...");
-        int i = 1/0;
         return apiResponseDTO;
     }
 }
