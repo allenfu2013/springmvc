@@ -10,10 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-@RequestMapping("api")
 public class ApiController {
 
-    @RequestMapping("/**/*")
+    @RequestMapping("/api/**/*")
     @ResponseBody
     public ApiResponseDTO dataApi(HttpServletRequest request, HttpServletResponse response) {
         String api = (String) request.getAttribute("api");
@@ -22,6 +21,22 @@ public class ApiController {
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO();
         apiResponseDTO.setRetCode("00");
         apiResponseDTO.setRetMsg("success");
+        return apiResponseDTO;
+    }
+
+    /**
+     * Spring MVC对于url的匹配采用的是一种叫做“最精确匹配的方式”, 所有api都配置不到時才进入此方法
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("*")
+    @ResponseBody
+    public ApiResponseDTO apiNotFound(HttpServletRequest request, HttpServletResponse response) {
+        Logger.info(this, String.format("request: %s", request.getRequestURI()));
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO();
+        apiResponseDTO.setRetCode("10");
+        apiResponseDTO.setRetMsg("api not found, please see api doc");
         return apiResponseDTO;
     }
 }
