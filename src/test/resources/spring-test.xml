@@ -20,9 +20,6 @@
 
     <context:property-placeholder file-encoding="UTF-8" location="classpath:app.properties"/>
 
-    <task:scheduler id="poolTaskScheduler" pool-size="5"/>
-    <task:annotation-driven scheduler="poolTaskScheduler" mode="proxy" proxy-target-class="true"/>
-
     <!-- 配置data source -->
     <!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="${jdbc.driverClassName}"/>
@@ -90,11 +87,4 @@
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <bean id="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"
-          destroy-method="destroy">
-        <property name="corePoolSize" value="5"/>
-        <property name="maxPoolSize" value="10"/>
-        <property name="keepAliveSeconds" value="60"/>
-        <property name="queueCapacity" value="5"/>
-    </bean>
 </beans>
