@@ -228,7 +228,7 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-    <!-- use fastjson to convert http request & response message -->
+    <!-- 使用阿里的fastjson对请求和响应的消息进行json转换 -->
     <mvc:annotation-driven>
         <mvc:message-converters>
             <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter"/>
@@ -239,5 +239,79 @@
 
 ```
 
-## 未完待续
+## spring mvc 拦截器
+
+#### 对指定url进行拦截的配置spring-servlet.xml
+```xml
+
+<mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 指定拦截的url -->
+            <mvc:mapping path="/api/**"/>
+            <!-- 指定拦截类 -->
+            <bean class="org.allen.springmvc.interceptor.AccessInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+```
+
+#### 拦截类
+
+```java
+
+public class AccessInterceptor implements HandlerInterceptor {
+
+    // 在业务处理器处理请求之前被调用
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
+        // TODO
+        return true;
+    }
+
+    // 在业务处理器处理请求执行完成后,生成视图之前执行
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView modelAndView) throws Exception {
+        // TODO
+    }
+
+    // 在DispatcherServlet完全处理完请求后被调用,可用于清理资源等
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object o, Exception e) throws Exception {
+        // TODO
+    }
+}
+```
+
+## 统一异常处理
+
+```java
+
+@Component
+public class GlobalExceptionHandler implements HandlerExceptionResolver {
+
+    @Override
+    public ModelAndView resolveException(HttpServletRequest request,
+                                         HttpServletResponse response,
+                                         Object object,
+                                         Exception exception) {
+        ModelAndView mv = new ModelAndView();
+        
+        
+        // TODO 异常处理逻辑
+        
+        
+        // 如果需要返回错误页面
+        // TODO
+        
+        // 如果需要返回json信息，可通过FastJsonJsonView
+        FastJsonJsonView view = new FastJsonJsonView();
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.put("retCode", retCode);  // 错误代码
+        attributes.put("retMsg", retMsg);    // 错误信息
+        view.setAttributesMap(attributes);
+        mv.setView(view);
+        
+        return mv;
+    }
+```
 
