@@ -315,3 +315,103 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
     }
 ```
 
+## spring test & dbunit
+
+### maven依赖
+``` xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-test</artifactId>
+    <version>${springframework.version}</version>
+</dependency>
+<dependency>
+    <groupId>com.github.springtestdbunit</groupId>
+    <artifactId>spring-test-dbunit</artifactId>
+    <version>1.0.1</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.dbunit</groupId>
+    <artifactId>dbunit</artifactId>
+    <version>2.4.9</version>
+    <scope>test</scope>
+</dependency>
+
+```
+
+### spring-test.xml
+
+```xml
+
+<bean id="dataSource" class="">
+    ...
+</bean>
+
+<bean id="dbUnitDatabaseConfig" class="com.github.springtestdbunit.bean.DatabaseConfigBean">
+    <property name="skipOracleRecyclebinTables" value="true"/>
+    <property name="qualifiedTableNames" value="true"/>
+</bean>
+
+<bean id="dbUnitDatabaseConnection" class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+    <property name="databaseConfig" ref="dbUnitDatabaseConfig"/>
+    <property name="dataSource" ref="dataSource"/>
+    <!-- oracle必须配置schema,不配置会抛AmbiguousTableNameException,mysql不要配置schema,否则执行@ExpectedDatabase的逻辑时会抛错 -->
+    <!--<property name="schema" value=""/>-->
+</bean>
+```
+
+### SpringBaseTest
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:spring-test.xml")
+@TestExecutionListeners({
+        DependencyInjectionTestExecutionListener.class,
+        TransactionalTestExecutionListener.class,
+        TransactionDbUnitTestExecutionListener.class})
+@DbUnitConfiguration(databaseConnection = "dbUnitDatabaseConnection")
+@TransactionConfiguration(defaultRollback = true)
+public class SpringBaseTest extends AbstractTransactionalJUnit4SpringContextTests {
+
+}
+
+```
+
+### prepare data
+
+dbunit支持使用多种方式准备测试数据, 比如xml, csv, xls等
+
+```xml
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <user id="100" name="name_100"/>
+    <user id="101" name="name_101"/>
+</dataset>
+```
+
+### test class
+
+```java
+public class UserDaoTest extends SpringBaseTest {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Test
+    public void testInsert() {
+        User user = new User();
+        user.setName("test");
+        long id = userDao.insert(user);
+        assertTrue(id > 0);
+    }
+
+    @Test
+    @DatabaseSetup({"classpath:/dbunit/UserDaoTest.xml"})
+    public void testGetById() {
+        User user = userDao.getById(100L);
+        assertNotNull(user);
+        assertEquals(100, user.getId().longValue());
+        assertEquals("name_100", user.getName());
+    }
+}
+````

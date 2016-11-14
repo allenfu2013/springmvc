@@ -72,6 +72,18 @@
         <property name="filters" value="stat"/>
     </bean>
 
+    <bean id="dbUnitDatabaseConfig" class="com.github.springtestdbunit.bean.DatabaseConfigBean">
+        <property name="skipOracleRecyclebinTables" value="true"/>
+        <property name="qualifiedTableNames" value="true"/>
+    </bean>
+
+    <bean id="dbUnitDatabaseConnection" class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+        <property name="databaseConfig" ref="dbUnitDatabaseConfig"/>
+        <property name="dataSource" ref="dataSource"/>
+        <!-- oracle必须配置schema，不配置会抛AmbiguousTableNameException，mysql不要配置schema，否则执行@ExpectedDatabase的逻辑时会抛错 -->
+        <!--<property name="schema" value=""/>-->
+    </bean>
+
     <bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
         <property name="configLocation" value="classpath:/config/sqlMapConfig.xml"/>
         <property name="dataSource" ref="dataSource"/>
