@@ -12,23 +12,26 @@ public class ApiResponseDTO {
         return retCode;
     }
 
-    public void setRetCode(String retCode) {
+    public ApiResponseDTO setRetCode(String retCode) {
         this.retCode = retCode;
+        return this;
     }
 
     public String getRetMsg() {
         return retMsg;
     }
 
-    public void setRetMsg(String retMsg) {
+    public ApiResponseDTO setRetMsg(String retMsg) {
         this.retMsg = retMsg;
+        return this;
     }
 
     public Object getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public ApiResponseDTO setData(Object data) {
         this.data = data;
+        return this;
     }
 }
