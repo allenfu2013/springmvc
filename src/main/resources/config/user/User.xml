@@ -3,19 +3,21 @@
         PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
         "http://www.ibatis.com/dtd/sql-map-2.dtd">
 <sqlMap namespace="User">
-	<insert id="insert" parameterClass="org.allen.springmvc.entity.User">
-		<!--<selectKey keyProperty="id"> -->
-                        <!---->
-		<!--</selectKey> -->
-		insert into user values(#id#,#name#)
-	</insert>
-	
-	<sql id="all_columns">
-		id id,
-		name name
-	</sql>
-	
-	<select id="getById" parameterClass="map" resultClass="org.allen.springmvc.entity.User">
-		select <include refid="all_columns"/> from user where id = #userId#
-	</select>
+    <insert id="insert" parameterClass="org.allen.springmvc.entity.User">
+        insert into user(name) values(#name#)
+        <selectKey keyProperty="id" resultClass="java.lang.Long">
+            select last_insert_id() as id
+        </selectKey>
+    </insert>
+
+    <sql id="all_columns">
+        id id,
+        name name
+    </sql>
+
+    <select id="getById" parameterClass="map" resultClass="org.allen.springmvc.entity.User">
+        select
+        <include refid="all_columns"/>
+        from user where id = #userId#
+    </select>
 </sqlMap>
